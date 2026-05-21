@@ -236,7 +236,12 @@ class ApprainScannerController {
 
     // Apply duplicate filter and notify
     if (enableDuplicateFilter) {
-      final filtered = results.where((r) => _scannedValues.add(r.rawValue));
+      // IMPORTANT: Must eagerly evaluate with .toList() because Set.add()
+      // is a side-effecting predicate. A lazy iterable would re-evaluate
+      // the predicate on each iteration, causing add() to return false
+      // on the 2nd+ pass (value already in set) → silently dropping results.
+      final filtered =
+          results.where((r) => _scannedValues.add(r.rawValue)).toList();
       if (filtered.isNotEmpty) {
         for (final result in filtered) {
           log(
@@ -244,7 +249,7 @@ class ApprainScannerController {
             '(format: ${result.format}, confidence: ${result.confidence})',
           );
         }
-        onDetect?.call(filtered.toList());
+        onDetect?.call(filtered);
       }
     } else {
       for (final result in results) {
