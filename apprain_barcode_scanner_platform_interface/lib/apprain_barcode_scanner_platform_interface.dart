@@ -6,6 +6,8 @@ library;
 
 // Platform interface definition.
 export 'src/apprain_barcode_scanner_platform.dart';
+// Barcode symbology format enum.
+export 'src/types/barcode_format.dart';
 // Scan result returned from native barcode detection.
 export 'src/types/native_scan_result.dart';
 // Scanner configuration sent to native side.

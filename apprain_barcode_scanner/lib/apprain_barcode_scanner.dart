@@ -9,6 +9,7 @@ library;
 export 'package:apprain_barcode_scanner_platform_interface/apprain_barcode_scanner_platform_interface.dart'
     show
         ApprainBarcodeScannerPlatform,
+        BarcodeFormat,
         CameraErrorEvent,
         CameraEvent,
         CameraReadyEvent,

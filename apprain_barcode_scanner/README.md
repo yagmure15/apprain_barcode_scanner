@@ -88,7 +88,7 @@ class _ScannerPageState extends State<ScannerPage> {
     super.initState();
     _controller = ApprainScannerController(
       config: const ScannerConfiguration(
-        allowedFormats: ['QR_CODE', 'CODE_128', 'EAN_13'],
+        allowedFormats: [BarcodeFormat.qrCode, BarcodeFormat.code128, BarcodeFormat.ean13],
       ),
       onDetect: (results) {
         for (final result in results) {
@@ -161,7 +161,7 @@ class _ScannerPageState extends State<ScannerPage> {
 | `scanWindowHeightRatio` | `double` | `0.35` | Scan window height ratio |
 | `scanWindowVerticalOffsetRatio` | `double` | `0.10` | Vertical offset from center |
 | `enableScanWindow` | `bool` | `true` | Enable ROI-based scanning |
-| `allowedFormats` | `List<String>` | `[]` | Barcode formats to detect (empty = all) |
+| `allowedFormats` | `List<BarcodeFormat>` | `[]` | Barcode formats to detect (empty = all) |
 | `enablePreprocessing` | `bool` | `true` | Enable image preprocessing |
 | `targetResolution` | `ScannerResolution` | `hd720` | Camera resolution |
 | `maxFrameRate` | `int` | `15` | Max frames per second |
@@ -208,7 +208,7 @@ class _ScannerPageState extends State<ScannerPage> {
 | Property | Type | Description |
 |---|---|---|
 | `rawValue` | `String` | Decoded barcode string |
-| `format` | `String` | Barcode format (e.g. 'QR_CODE') |
+| `format` | `BarcodeFormat` | Barcode format enum |
 | `corners` | `List<double>` | Corner points [x1,y1,...,x4,y4] |
 | `confidence` | `double` | Detection confidence (0.0 – 1.0) |
 | `boundingBox` | `Rect?` | Normalized bounding box |

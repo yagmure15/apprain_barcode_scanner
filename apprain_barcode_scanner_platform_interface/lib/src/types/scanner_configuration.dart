@@ -1,3 +1,5 @@
+import 'barcode_format.dart';
+
 /// Scanner configuration sent from Dart to native platform.
 ///
 /// Controls camera behavior, scan window, and barcode format filtering.
@@ -29,9 +31,7 @@ class ScannerConfiguration {
   final bool enableScanWindow;
 
   /// Barcode formats to detect. Empty list means detect all formats.
-  ///
-  /// Values should be format strings like 'QR_CODE', 'CODE_128', etc.
-  final List<String> allowedFormats;
+  final List<BarcodeFormat> allowedFormats;
 
   /// Whether to enable image preprocessing (contrast, sharpening).
   final bool enablePreprocessing;
@@ -54,7 +54,7 @@ class ScannerConfiguration {
         'scanWindowHeightRatio': scanWindowHeightRatio,
         'scanWindowVerticalOffsetRatio': scanWindowVerticalOffsetRatio,
         'enableScanWindow': enableScanWindow,
-        'allowedFormats': allowedFormats,
+        'allowedFormats': allowedFormats.map((f) => f.value).toList(),
         'enablePreprocessing': enablePreprocessing,
         'targetResolution': targetResolution.name,
         'maxFrameRate': maxFrameRate,
@@ -68,7 +68,7 @@ class ScannerConfiguration {
     double? scanWindowHeightRatio,
     double? scanWindowVerticalOffsetRatio,
     bool? enableScanWindow,
-    List<String>? allowedFormats,
+    List<BarcodeFormat>? allowedFormats,
     bool? enablePreprocessing,
     ScannerResolution? targetResolution,
     int? maxFrameRate,

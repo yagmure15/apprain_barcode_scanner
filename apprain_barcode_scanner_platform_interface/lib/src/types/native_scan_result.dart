@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'barcode_format.dart';
+
 /// Scan result returned from native barcode detection.
 ///
 /// Contains the raw barcode value, its format, bounding box corners,
@@ -18,7 +20,7 @@ class NativeScanResult {
   factory NativeScanResult.fromMap(Map<Object?, Object?> map) {
     return NativeScanResult(
       rawValue: map['rawValue']! as String,
-      format: map['format'] as String? ?? 'unknown',
+      format: BarcodeFormat.fromString(map['format'] as String? ?? 'UNKNOWN'),
       corners: _parseCorners(map['corners']),
       confidence: (map['confidence'] as num?)?.toDouble() ?? 1.0,
       boundingBox: _parseBoundingBox(map['boundingBox']),
@@ -28,8 +30,8 @@ class NativeScanResult {
   /// The raw decoded barcode string value.
   final String rawValue;
 
-  /// Barcode symbology format (e.g. 'QR_CODE', 'CODE_128', 'EAN_13').
-  final String format;
+  /// Barcode symbology format.
+  final BarcodeFormat format;
 
   /// Bounding box corners as [x1,y1, x2,y2, x3,y3, x4,y4].
   ///
@@ -60,7 +62,7 @@ class NativeScanResult {
   /// Serializes this result to a map for platform channel communication.
   Map<String, Object?> toMap() => {
         'rawValue': rawValue,
-        'format': format,
+        'format': format.value,
         'corners': corners,
         'confidence': confidence,
       };

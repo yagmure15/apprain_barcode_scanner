@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 /// ```dart
 /// final controller = ApprainScannerController(
 ///   config: ScannerConfiguration(
-///     allowedFormats: ['QR_CODE', 'CODE_128'],
+///     allowedFormats: [BarcodeFormat.qrCode, BarcodeFormat.code128],
 ///   ),
 ///   onDetect: (results) {
 ///     for (final result in results) {
