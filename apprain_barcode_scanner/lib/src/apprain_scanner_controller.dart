@@ -65,6 +65,12 @@ class ApprainScannerController {
   /// Subscription to camera events from native.
   StreamSubscription<CameraEvent>? _cameraSubscription;
 
+  /// Timer to auto-clear barcode corners when no new detections arrive.
+  Timer? _cornersClearTimer;
+
+  /// Duration after which barcode overlay disappears if no new scan arrives.
+  static const _cornersTimeout = Duration(milliseconds: 500);
+
   /// Whether the controller has been initialized.
   bool _isInitialized = false;
 
@@ -164,6 +170,9 @@ class ApprainScannerController {
     _isInitialized = false;
     _isRunning = false;
     _scannedValues.clear();
+    _cornersClearTimer?.cancel();
+    _cornersClearTimer = null;
+    barcodeCorners.value = [];
     log('📷 ApprainScannerController disposed.');
   }
 
@@ -211,6 +220,14 @@ class ApprainScannerController {
       }
     }
     barcodeCorners.value = allCorners;
+
+    // Auto-clear corners after timeout (QR moved away from camera)
+    _cornersClearTimer?.cancel();
+    if (allCorners.isNotEmpty) {
+      _cornersClearTimer = Timer(_cornersTimeout, () {
+        barcodeCorners.value = [];
+      });
+    }
 
     log(
       '📷 BarcodeCorners updated: ${allCorners.length} barcodes'
