@@ -1,0 +1,43 @@
+name: apprain_barcode_scanner
+description: >
+  High-performance native barcode/QR scanner with CameraX (Android)
+  and AVFoundation (iOS). Includes customizable scan window overlay,
+  perspective-aware barcode bounding box, and tap-to-focus support.
+version: 1.0.0
+repository: https://github.com/yagmure15/apprain_barcode_scanner
+issue_tracker: https://github.com/yagmure15/apprain_barcode_scanner/issues
+homepage: https://github.com/yagmure15/apprain_barcode_scanner
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  apprain_barcode_scanner_android:
+    path: ../apprain_barcode_scanner_android
+  apprain_barcode_scanner_ios:
+    path: ../apprain_barcode_scanner_ios
+  apprain_barcode_scanner_platform_interface:
+    path: ../apprain_barcode_scanner_platform_interface
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: apprain_barcode_scanner_android
+      ios:
+        default_package: apprain_barcode_scanner_ios
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^6.0.0
+
+topics:
+  - scanner
+  - barcode
+  - qr-code
+  - camera
+  - overlay
