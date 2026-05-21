@@ -28,6 +28,7 @@ class ScannerPlatformView: NSObject, FlutterPlatformView,
     // Detection
     private var barcodeRequest: VNDetectBarcodesRequest?
     private var isProcessing = false
+    private var isConfiguring = false
     private var lastAnalysisTimestamp: TimeInterval = 0
 
     // Image preprocessing (GPU-accelerated)
@@ -115,18 +116,33 @@ class ScannerPlatformView: NSObject, FlutterPlatformView,
 
     func stopCamera() {
         processingQueue.async { [weak self] in
-            self?.captureSession.stopRunning()
+            guard let self = self else { return }
+            // Never call stopRunning while inside a configuration block
+            guard !self.isConfiguring else { return }
+            if self.captureSession.isRunning {
+                self.captureSession.stopRunning()
+            }
         }
     }
 
     func disposeResources() {
-        stopCamera()
-        captureSession.inputs.forEach { captureSession.removeInput($0) }
-        captureSession.outputs.forEach { captureSession.removeOutput($0) }
-        previewLayer?.removeFromSuperlayer()
-        previewLayer = nil
-        scanEventSink = nil
-        cameraEventSink = nil
+        // Perform all cleanup on the processing queue to avoid
+        // calling stopRunning between beginConfiguration/commitConfiguration
+        processingQueue.async { [weak self] in
+            guard let self = self else { return }
+            if self.captureSession.isRunning {
+                self.captureSession.stopRunning()
+            }
+            self.captureSession.inputs.forEach { self.captureSession.removeInput($0) }
+            self.captureSession.outputs.forEach { self.captureSession.removeOutput($0) }
+
+            DispatchQueue.main.async {
+                self.previewLayer?.removeFromSuperlayer()
+                self.previewLayer = nil
+                self.scanEventSink = nil
+                self.cameraEventSink = nil
+            }
+        }
     }
 
     func setTorch(enabled: Bool) {
@@ -263,6 +279,9 @@ class ScannerPlatformView: NSObject, FlutterPlatformView,
     }
 
     private func setupCamera() {
+        isConfiguring = true
+        captureSession.beginConfiguration()
+
         // Remove existing inputs/outputs
         captureSession.inputs.forEach { captureSession.removeInput($0) }
         captureSession.outputs.forEach { captureSession.removeOutput($0) }
@@ -323,6 +342,9 @@ class ScannerPlatformView: NSObject, FlutterPlatformView,
         if enableTorch {
             setTorch(enabled: true)
         }
+
+        captureSession.commitConfiguration()
+        isConfiguring = false
     }
 
     private func setupPreviewLayer() {
